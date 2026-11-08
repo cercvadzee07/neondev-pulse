@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { runChecks } from "@/lib/checker";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 type Field = "name" | "url" | "interval_minutes" | "expected_status";
@@ -102,6 +104,16 @@ export async function deleteMonitor(formData: FormData) {
   await supabase.from("monitors").delete().eq("id", id);
   revalidatePath("/dashboard");
   redirect("/dashboard");
+}
+
+/** "Check now": run checks for the signed-in user's active monitors. */
+export async function checkNow() {
+  const { supabase } = await requireUser();
+  const { data } = await supabase.from("monitors").select("id").eq("is_active", true);
+  const ids = (data ?? []).map((m) => m.id as string);
+  // RLS above guarantees these ids belong to the user; 30s gap prevents hammering.
+  if (ids.length) await runChecks(createAdminClient(), { monitorIds: ids, minGapMs: 30_000 });
+  revalidatePath("/dashboard");
 }
 
 export async function signOut() {

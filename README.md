@@ -4,7 +4,7 @@
 
 `Next.js 15` · `React 19` · `TypeScript` · `Tailwind CSS 4` · `Supabase` · `Vercel`
 
-> 🚧 Work in progress — Phase 2 of 7 (auth + monitor management).
+> 🚧 Work in progress — Phase 3 of 7 (check engine).
 
 ## Run locally
 
@@ -26,11 +26,21 @@ Open http://localhost:3000 — the landing page and `/dashboard` render with dem
 
 > Tip: for faster local testing you can turn off **Authentication → Sign In / Providers → Email → Confirm email**.
 
+## How checks run
+
+`src/lib/checker.ts` pings every due monitor (8 in parallel), retries once before marking a site down,
+stores each result in `checks`, and opens / resolves `incidents` automatically.
+
+- **Scheduled:** `deploy/uptime-checks.yml` (move it to `.github/workflows/` when deploying) calls `POST /api/cron/check` every 5 minutes
+  with `Authorization: Bearer $CRON_SECRET`. Add `PULSE_URL` and `CRON_SECRET` as repository secrets after deploying.
+- **Manual:** the **Check now** button on the dashboard.
+- **Locally:** `curl -X POST -H "Authorization: Bearer <CRON_SECRET>" http://localhost:3000/api/cron/check`
+
 ## Roadmap
 
 - [x] **1. Setup** — scaffold, NEONDEV design system, DB schema + RLS
 - [x] **2. Auth + dashboard** — sign up / login, add · edit · delete monitors
-- [ ] **3. Check engine** — `/api/cron/check` + GitHub Actions schedule (every 5 min)
+- [x] **3. Check engine** — `/api/cron/check` + GitHub Actions schedule (every 5 min)
 - [ ] **4. Monitor detail** — uptime 24h/7d/30d, response-time chart, incident timeline
 - [ ] **5. Alerts** — email on down & recovery
 - [ ] **6. Public status page** — `/status/[slug]` with 90-day history

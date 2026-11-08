@@ -1,5 +1,7 @@
 import { supabaseConfigured } from "@/components/SetupNotice";
 import Link from "next/link";
+import { CheckNowButton } from "@/components/CheckNowButton";
+import { checkNow } from "./actions";
 import { StatusLabel } from "@/components/StatusDot";
 import { UptimeBar } from "@/components/UptimeBar";
 import { createClient } from "@/lib/supabase/server";
@@ -60,12 +62,19 @@ export default async function Dashboard() {
           <p className="hud mb-3">Overview</p>
           <h1 className="display text-4xl sm:text-5xl">Monitors</h1>
         </div>
-        <Link
-          href="/dashboard/new"
-          className="rounded-lg bg-lime px-4 py-2.5 text-sm font-bold text-bg transition-transform hover:-translate-y-0.5"
-        >
-          + Add monitor
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          {active.length > 0 && (
+            <form action={checkNow}>
+              <CheckNowButton />
+            </form>
+          )}
+          <Link
+            href="/dashboard/new"
+            className="rounded-lg bg-lime px-4 py-2.5 text-sm font-bold text-bg transition-transform hover:-translate-y-0.5"
+          >
+            + Add monitor
+          </Link>
+        </div>
       </div>
 
       <section className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">

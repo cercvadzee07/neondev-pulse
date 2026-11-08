@@ -9,12 +9,14 @@ export async function GET() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
   const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  const cron = process.env.CRON_SECRET ?? "";
 
   const env = {
     url: url ? JSON.stringify(url) : "MISSING",
     urlLooksValid: /^https:\/\/[a-z0-9]+\.supabase\.co$/.test(url),
     anonKey: anon ? `${anon.slice(0, 15)}… (${anon.length} chars)` : "MISSING",
     secretKey: secret ? `${secret.slice(0, 10)}… (${secret.length} chars)` : "MISSING",
+    cronSecret: cron ? `${cron.slice(0, 4)}… (${cron.length} chars)` : "MISSING",
   };
 
   try {
