@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* ───────────── NEONDEV design tokens ───────────── */
+@theme {
+  --color-bg: #080a12;
+  --color-panel: #11131c;
+  --color-line: #2a3045;
+
+  --color-neon-sky: #7dd3fc;
+  --color-neon-indigo: #a5b4fc;
+  --color-neon-lavender: #c4b5fd;
+  --color-lime: #a3e635;
+
+  --color-ink: #ffffff;
+  --color-body: #c9d1e4;
+  --color-muted: #8a93a8;
+  --color-dim: #525a6e;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), "DejaVu Sans Mono", ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-pulse-dot: pulse-dot 2s var(--ease-out-expo) infinite;
+  --animate-rise: rise 0.7s var(--ease-out-expo) both;
+
+  @keyframes pulse-dot {
+    0% { box-shadow: 0 0 0 0 rgb(163 230 53 / 0.55); }
+    70% { box-shadow: 0 0 0 8px rgb(163 230 53 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(163 230 53 / 0); }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ───────────── Base ───────────── */
+html {
+  color-scheme: dark;
+}
+body {
+  background: var(--color-bg);
+  color: var(--color-body);
+  font-family: var(--font-sans);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: rgb(165 180 252 / 0.3);
+  color: #fff;
+}
+
+/* ───────────── Utilities ───────────── */
+@utility text-gradient {
+  background: linear-gradient(135deg, #7dd3fc 0%, #a5b4fc 50%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-gradient-brand {
+  background: linear-gradient(135deg, #7dd3fc 0%, #a5b4fc 50%, #c4b5fd 100%);
+}
+
+/* Glass panel with thin gradient border + soft glow */
+@utility glass {
+  background:
+    linear-gradient(rgb(17 19 28 / 0.78), rgb(17 19 28 / 0.78)) padding-box,
+    linear-gradient(135deg, rgb(125 211 252 / 0.45), rgb(42 48 69 / 0.6) 45%, rgb(196 181 253 / 0.45)) border-box;
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  box-shadow: 0 0 48px -16px rgb(165 180 252 / 0.28);
+  backdrop-filter: blur(14px);
+}
+
+/* Monospace HUD label */
+@utility hud {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-dim);
+}
+
+@utility display {
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

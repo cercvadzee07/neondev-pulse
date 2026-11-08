@@ -1,0 +1,47 @@
+# NEONDEV Pulse
+
+**Uptime monitoring & public status pages.** Know it's down before your users do.
+
+`Next.js 15` · `React 19` · `TypeScript` · `Tailwind CSS 4` · `Supabase` · `Vercel`
+
+> 🚧 Work in progress — Phase 1 of 7 (scaffold, design system, database schema).
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:3000 — the landing page and `/dashboard` render with demo data, no keys needed yet.
+
+## Connect Supabase (needed from Phase 2)
+
+1. Create a free project at [supabase.com](https://supabase.com).
+2. **SQL Editor → New query** → paste `supabase/migrations/0001_init.sql` → **Run**.
+3. Copy `.env.example` to `.env.local` and fill in the values from **Project Settings → API**.
+
+## Roadmap
+
+- [x] **1. Setup** — scaffold, NEONDEV design system, DB schema + RLS
+- [ ] **2. Auth + dashboard** — sign up / login, add · edit · delete monitors
+- [ ] **3. Check engine** — `/api/cron/check` + GitHub Actions schedule (every 5 min)
+- [ ] **4. Monitor detail** — uptime 24h/7d/30d, response-time chart, incident timeline
+- [ ] **5. Alerts** — email on down & recovery
+- [ ] **6. Public status page** — `/status/[slug]` with 90-day history
+- [ ] **7. Polish** — screenshots, case study, demo data
+
+## Project structure
+
+```
+src/
+  app/            routes (landing, dashboard)
+  components/     NEONDEV UI primitives (Logo, StatusDot, UptimeBar, Sparkline, Backdrop)
+  lib/            types, demo data, Supabase clients
+supabase/
+  migrations/     SQL schema
+```
+
+## License
+
+MIT
