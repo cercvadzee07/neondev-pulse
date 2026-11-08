@@ -30,9 +30,20 @@ export async function GET() {
       headers: { apikey: anon, authorization: `Bearer ${anon}` },
       cache: "no-store",
     });
+    const anonGet = async (path: string) => {
+      const r = await fetch(`${url}/rest/v1/${path}`, {
+        headers: { apikey: anon, authorization: `Bearer ${anon}` },
+        cache: "no-store",
+      });
+      const body = await r.text();
+      return r.ok ? `ok (${(JSON.parse(body) as unknown[]).length} rows)` : `${r.status}: ${body.slice(0, 160)}`;
+    };
     const privacy = {
       anonCanReadMonitorUrls: anonRead.ok ? ((await anonRead.json()) as unknown[]).length > 0 : false,
       status: anonRead.ok ? "EXPOSED or no public monitors" : `blocked (${anonRead.status})`,
+      // Public status page reads — these should all be "ok".
+      publicChecks: await anonGet("checks?select=id,monitor_id,checked_at,status&limit=5"),
+      publicIncidents: await anonGet("incidents?select=id,monitor_id,started_at&limit=5"),
     };
 
     return NextResponse.json({ env, privacy, reach: { ok: res.ok, status: res.status, body: await res.text() } });

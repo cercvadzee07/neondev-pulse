@@ -18,8 +18,10 @@ function fmtDuration(ms: number) {
   return h < 48 ? `${h}h ${m % 60}m` : `${Math.floor(h / 24)}d ${h % 24}h`;
 }
 
+const ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+
 function esc(s: string) {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+  return s.replace(/[&<>"']/g, (c) => ESCAPES[c] ?? c);
 }
 
 /** NEONDEV-styled email. Table layout + inline styles for email clients. */
