@@ -10,6 +10,7 @@ interface Initial {
   url?: string;
   interval_minutes?: number;
   expected_status?: number;
+  notify_email?: boolean;
 }
 
 export function MonitorForm({
@@ -29,6 +30,7 @@ export function MonitorForm({
     url: v?.url ?? initial.url,
     interval_minutes: v ? Number(v.interval_minutes) : (initial.interval_minutes ?? 5),
     expected_status: v?.expected_status ?? initial.expected_status ?? 200,
+    notify_email: v ? v.notify_email === "on" : (initial.notify_email ?? true),
   };
   // Remount inputs with the echoed values after each submit (React 19 resets forms).
   const formKey = v ? JSON.stringify(v) : "initial";
@@ -81,6 +83,19 @@ export function MonitorForm({
           {fe.expected_status && <span className={fieldErrorClass}>{fe.expected_status}</span>}
         </label>
       </div>
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-line bg-bg/40 px-4 py-3">
+        <input
+          type="checkbox"
+          name="notify_email"
+          defaultChecked={val.notify_email}
+          className="mt-0.5 size-4 accent-[#a3e635]"
+        />
+        <span>
+          <span className="block text-sm font-semibold text-ink">Email alerts</span>
+          <span className="block text-sm text-muted">Email me when this site goes down and when it recovers.</span>
+        </span>
+      </label>
 
       {state?.error && (
         <p role="alert" className="rounded-lg border border-neon-lavender/40 px-3 py-2 text-sm text-ink">

@@ -2,11 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { sendAlerts } from "@/lib/alerts";
 import { runChecks } from "@/lib/checker";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
-type Field = "name" | "url" | "interval_minutes" | "expected_status";
+type Field = "name" | "url" | "interval_minutes" | "expected_status" | "notify_email";
 export type MonitorFormState =
   | { error?: string; fieldErrors?: Partial<Record<Field, string>>; values?: Record<Field, string> }
   | undefined;
@@ -14,7 +15,7 @@ export type MonitorFormState =
 /** Echo back what the user typed so the form keeps it after a failed submit. */
 function echo(formData: FormData): Record<Field, string> {
   const get = (k: Field) => String(formData.get(k) ?? "");
-  return { name: get("name"), url: get("url"), interval_minutes: get("interval_minutes"), expected_status: get("expected_status") };
+  return { name: get("name"), url: get("url"), interval_minutes: get("interval_minutes"), expected_status: get("expected_status"), notify_email: formData.get("notify_email") === "on" ? "on" : "off" };
 }
 
 const INTERVALS = [5, 10, 15, 30, 60];
@@ -42,8 +43,10 @@ function parseMonitor(formData: FormData) {
   if (!Number.isInteger(expected_status) || expected_status < 100 || expected_status > 599)
     fieldErrors.expected_status = "Use an HTTP status between 100 and 599.";
 
+  const notify_email = formData.get("notify_email") === "on";
+
   if (Object.keys(fieldErrors).length) return { ok: false as const, fieldErrors };
-  return { ok: true as const, data: { name, url, interval_minutes, expected_status } };
+  return { ok: true as const, data: { name, url, interval_minutes, expected_status, notify_email } };
 }
 
 async function requireUser() {
@@ -112,7 +115,11 @@ export async function checkNow() {
   const { data } = await supabase.from("monitors").select("id").eq("is_active", true);
   const ids = (data ?? []).map((m) => m.id as string);
   // RLS above guarantees these ids belong to the user; 30s gap prevents hammering.
-  if (ids.length) await runChecks(createAdminClient(), { monitorIds: ids, minGapMs: 30_000 });
+  if (ids.length) {
+    const admin = createAdminClient();
+    const summary = await runChecks(admin, { monitorIds: ids, minGapMs: 30_000 });
+    await sendAlerts(admin, summary.transitions);
+  }
   revalidatePath("/dashboard");
 }
 
@@ -121,7 +128,11 @@ export async function checkMonitorNow(formData: FormData) {
   const id = String(formData.get("id"));
   const { supabase } = await requireUser();
   const { data } = await supabase.from("monitors").select("id").eq("id", id).eq("is_active", true).maybeSingle();
-  if (data) await runChecks(createAdminClient(), { monitorIds: [id], minGapMs: 30_000 });
+  if (data) {
+    const admin = createAdminClient();
+    const summary = await runChecks(admin, { monitorIds: [id], minGapMs: 30_000 });
+    await sendAlerts(admin, summary.transitions);
+  }
   revalidatePath(`/dashboard/${id}`);
   revalidatePath("/dashboard");
 }

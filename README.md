@@ -4,7 +4,7 @@
 
 `Next.js 15` · `React 19` · `TypeScript` · `Tailwind CSS 4` · `Supabase` · `Vercel`
 
-> 🚧 Work in progress — Phase 4 of 7 (monitor detail page).
+> 🚧 Work in progress — Phase 5 of 7 (email alerts).
 
 ## Run locally
 
@@ -36,13 +36,19 @@ stores each result in `checks`, and opens / resolves `incidents` automatically.
 - **Manual:** the **Check now** button on the dashboard.
 - **Locally:** `curl -X POST -H "Authorization: Bearer <CRON_SECRET>" http://localhost:3000/api/cron/check`
 
+## Email alerts
+
+On every up → down or down → up change, `src/lib/alerts.ts` sends a branded email via the [Resend](https://resend.com) API
+(plain `fetch`, no SDK). Toggle per monitor with **Email alerts** on the monitor form.
+Run `supabase/migrations/0002_alerts.sql` once, then set `RESEND_API_KEY` (and `ALERT_TEST_TO` while developing).
+
 ## Roadmap
 
 - [x] **1. Setup** — scaffold, NEONDEV design system, DB schema + RLS
 - [x] **2. Auth + dashboard** — sign up / login, add · edit · delete monitors
 - [x] **3. Check engine** — `/api/cron/check` + GitHub Actions schedule (every 5 min)
 - [x] **4. Monitor detail** — uptime 24h/7d/30d, response-time chart, incident timeline
-- [ ] **5. Alerts** — email on down & recovery
+- [x] **5. Alerts** — email on down & recovery
 - [ ] **6. Public status page** — `/status/[slug]` with 90-day history
 - [ ] **7. Portfolio** — add NEONDEV Pulse to the NEONDEV portfolio site
 

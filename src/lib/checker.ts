@@ -18,6 +18,7 @@ export interface MonitorRow {
   interval_minutes: number;
   current_status: "up" | "down" | "pending";
   last_checked_at: string | null;
+  notify_email?: boolean;
 }
 
 export interface PingResult {
@@ -123,7 +124,7 @@ export async function runChecks(
 
   let q = admin
     .from("monitors")
-    .select("id, user_id, name, url, method, expected_status, timeout_ms, interval_minutes, current_status, last_checked_at")
+    .select("*")
     .eq("is_active", true);
   if (opts.monitorIds) q = q.in("id", opts.monitorIds);
 

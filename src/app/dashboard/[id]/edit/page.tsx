@@ -13,7 +13,7 @@ export default async function EditMonitorPage({ params }: { params: Promise<{ id
   const supabase = await createClient();
   const { data: m } = await supabase
     .from("monitors")
-    .select("id, name, url, interval_minutes, expected_status, is_active")
+    .select("*")
     .eq("id", id)
     .maybeSingle();
 

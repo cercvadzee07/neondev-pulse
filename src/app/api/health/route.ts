@@ -17,6 +17,9 @@ export async function GET() {
     anonKey: anon ? `${anon.slice(0, 15)}… (${anon.length} chars)` : "MISSING",
     secretKey: secret ? `${secret.slice(0, 10)}… (${secret.length} chars)` : "MISSING",
     cronSecret: cron ? `${cron.slice(0, 4)}… (${cron.length} chars)` : "MISSING",
+    resendKey: process.env.RESEND_API_KEY ? `${process.env.RESEND_API_KEY.slice(0, 3)}… (${process.env.RESEND_API_KEY.length} chars)` : "MISSING",
+    alertFrom: process.env.ALERT_FROM_EMAIL || "(default) onboarding@resend.dev",
+    alertTestTo: process.env.ALERT_TEST_TO ? "set" : "not set",
   };
 
   try {
