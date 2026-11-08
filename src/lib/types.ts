@@ -7,6 +7,7 @@ export interface Monitor {
   interval_minutes: number;
   current_status: MonitorStatus;
   last_checked_at: string | null;
+  is_active: boolean;
 }
 
 export interface Check {

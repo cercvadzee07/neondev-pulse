@@ -55,6 +55,7 @@ export const demoMonitors: DemoMonitor[] = base.map((m) => {
     interval_minutes: 5,
     current_status: m.current_status,
     last_checked_at: null,
+    is_active: true,
     uptime30d: last30.reduce((a, b) => a + b, 0) / last30.length,
     avgMs: m.ms,
     history,
