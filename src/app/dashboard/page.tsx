@@ -105,7 +105,11 @@ export default async function Dashboard() {
               className={`grid gap-4 p-5 sm:p-6 md:grid-cols-[1.2fr_1fr_auto] md:items-center ${m.is_active ? "" : "opacity-55"}`}
             >
               <div className="min-w-0">
-                <h2 className="truncate text-base font-extrabold text-ink">{m.name}</h2>
+                <h2 className="truncate text-base font-extrabold text-ink">
+                  <Link href={`/dashboard/${m.id}`} className="transition-colors hover:text-neon-indigo">
+                    {m.name}
+                  </Link>
+                </h2>
                 <p className="truncate font-mono text-xs text-dim">{m.url}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1">
                   {m.is_active ? <StatusLabel status={m.current_status} /> : <span className="hud">Paused</span>}
@@ -121,10 +125,10 @@ export default async function Dashboard() {
               <div className="flex items-center gap-4 md:flex-col md:items-end">
                 <span className="font-mono text-sm text-body">{s30.avgMs === null ? "— ms" : `${s30.avgMs} ms`}</span>
                 <Link
-                  href={`/dashboard/${m.id}/edit`}
+                  href={`/dashboard/${m.id}`}
                   className="rounded-md border border-line px-3 py-1 text-xs font-semibold text-muted transition-colors hover:border-neon-indigo/60 hover:text-ink"
                 >
-                  Edit
+                  Details →
                 </Link>
               </div>
             </article>

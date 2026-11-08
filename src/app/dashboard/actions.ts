@@ -116,6 +116,16 @@ export async function checkNow() {
   revalidatePath("/dashboard");
 }
 
+/** "Check now" on a single monitor's page. */
+export async function checkMonitorNow(formData: FormData) {
+  const id = String(formData.get("id"));
+  const { supabase } = await requireUser();
+  const { data } = await supabase.from("monitors").select("id").eq("id", id).eq("is_active", true).maybeSingle();
+  if (data) await runChecks(createAdminClient(), { monitorIds: [id], minGapMs: 30_000 });
+  revalidatePath(`/dashboard/${id}`);
+  revalidatePath("/dashboard");
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
