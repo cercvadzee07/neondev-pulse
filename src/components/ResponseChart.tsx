@@ -10,7 +10,7 @@ export interface ChartPoint {
 }
 
 const H = 220;
-const PAD = { top: 16, right: 12, bottom: 28, left: 44 };
+const PAD = { top: 26, right: 12, bottom: 28, left: 44 };
 
 function niceMax(v: number) {
   if (v <= 0) return 100;
@@ -107,7 +107,7 @@ export function ResponseChart({ points }: { points: ChartPoint[] }) {
             </text>
           </g>
         ))}
-        <text x={PAD.left - 8} y={PAD.top - 4} textAnchor="end" className="fill-dim font-mono text-[9px] uppercase">
+        <text x={PAD.left - 8} y={PAD.top - 14} textAnchor="end" className="fill-dim font-mono text-[9px] uppercase">
           ms
         </text>
 

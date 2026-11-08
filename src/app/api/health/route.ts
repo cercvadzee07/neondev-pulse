@@ -24,7 +24,18 @@ export async function GET() {
 
   try {
     const res = await fetch(`${url}/auth/v1/health`, { headers: { apikey: anon }, cache: "no-store" });
-    return NextResponse.json({ env, reach: { ok: res.ok, status: res.status, body: await res.text() } });
+
+    // Privacy: can an anonymous visitor read monitored URLs? Must be "blocked".
+    const anonRead = await fetch(`${url}/rest/v1/monitors?select=url&limit=1`, {
+      headers: { apikey: anon, authorization: `Bearer ${anon}` },
+      cache: "no-store",
+    });
+    const privacy = {
+      anonCanReadMonitorUrls: anonRead.ok ? ((await anonRead.json()) as unknown[]).length > 0 : false,
+      status: anonRead.ok ? "EXPOSED or no public monitors" : `blocked (${anonRead.status})`,
+    };
+
+    return NextResponse.json({ env, privacy, reach: { ok: res.ok, status: res.status, body: await res.text() } });
   } catch (e) {
     const err = e as Error & { cause?: { code?: string; message?: string; hostname?: string } };
     return NextResponse.json({

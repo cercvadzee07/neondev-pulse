@@ -7,16 +7,22 @@ function barClass(pct: number | null) {
   return "bg-neon-lavender";
 }
 
-/** 90-day (or N-day) uptime strip, one bar per day. */
-export function UptimeBar({ days }: { days: DayUptime[] }) {
+/**
+ * N-day uptime strip, one bar per day.
+ * `mobileDays` shows only the most recent days on small screens so bars never overflow.
+ */
+export function UptimeBar({ days, mobileDays }: { days: DayUptime[]; mobileDays?: number }) {
+  const hideBefore = mobileDays ? days.length - mobileDays : 0;
   return (
     <div className="flex h-8 items-stretch gap-[2px]" role="list" aria-label="Daily uptime history">
-      {days.map((d) => (
+      {days.map((d, i) => (
         <span
           key={d.day}
           role="listitem"
           title={`${d.day} — ${d.pct === null ? "no data" : `${d.pct.toFixed(2)}% uptime`}`}
-          className={`min-w-[2px] flex-1 rounded-[2px] transition-opacity hover:opacity-60 ${barClass(d.pct)}`}
+          className={`min-w-[2px] flex-1 rounded-[2px] transition-opacity hover:opacity-60 ${barClass(d.pct)} ${
+            i < hideBefore ? "hidden sm:block" : ""
+          }`}
         />
       ))}
     </div>

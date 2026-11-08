@@ -1,3 +1,4 @@
+import { DashboardNav } from "@/components/DashboardNav";
 import { Logo } from "@/components/Logo";
 import { SetupNotice, supabaseConfigured } from "@/components/SetupNotice";
 import { createClient } from "@/lib/supabase/server";
@@ -13,8 +14,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 sm:px-6">
-      <header className="flex items-center justify-between gap-4 py-6">
-        <Logo />
+      <header className="flex flex-wrap items-center justify-between gap-4 py-6">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+          <Logo />
+          <DashboardNav />
+        </div>
         <div className="flex min-w-0 items-center gap-4">
           <span className="hud hidden truncate sm:inline">{user?.email}</span>
           <form action={signOut}>
